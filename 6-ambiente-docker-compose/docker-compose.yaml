@@ -1,0 +1,47 @@
+version: "3"
+
+# declaração dos serviços
+services:
+  # nome do serviço
+  backend:
+    # nome do container
+    container_name: backend
+    # diretório onde o Dockerfile está localizado para fazer o build e gerar a imagem da aplicação
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # volumes compartilhados entre máquina e container
+    volumes:
+      - ./backend/app:/src/app
+    # mapeamento de portas 8000 -> 8000 (máquina -> container)
+    ports:
+      - "8000:8000"
+    # diretório padrão dentro do container
+    working_dir: /src
+    # comando a ser utilizado quando o container for criado
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    # política de reinicilização do container
+    # restart: always
+
+  # nome do serviço
+  frontend:
+    # nome do container
+    container_name: frontend
+    # diretório onde o Dockerfile está localizado para fazer o build e gerar a imagem da aplicação
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    # volumes compartilhados entre máquina e container
+    volumes:
+      - dependencias_frontend:/src/node_modules
+      - ./frontend/app:/src/app
+    # mapeamento de portas 3000 -> 3000 (máquina -> container)
+    ports:
+      - "3000:3000"
+    # comando a ser utilizado quando o container for criado
+    command: npm run dev
+
+# volumes docker a serem criados
+volumes:
+  # nove do volume docker criado (pode ser removido com a flag -v)
+  dependencias_frontend:

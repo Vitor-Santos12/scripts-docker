@@ -1,0 +1,25 @@
+version: "3"
+
+# declaração dos serviços
+services:
+  # nome do serviço
+  api:
+    # nome do container
+    container_name: api
+    # diretório onde o Dockerfile está localizado para fazer o build e gerar a imagem da aplicação
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # volumes compartilhados entre máquina e container
+    volumes:
+      - ./app:/src/app
+    # mapeamento de portas 8000 -> 8000 (máquina -> container)
+    ports:
+      - "8000:8000"
+    # diretório padrão dentro do container
+    working_dir: /src
+    # definição das variáveis de ambiente via arquivo .env
+    environment:
+      - USERNAME=${USERNAME}
+    # comando a ser utilizado quando o container for criado
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
